@@ -1,6 +1,6 @@
                              Spark SQL Use Case – Hospital Charges Data Analysis
 
-Dataset Description
+Dataset Description(Dataset is in CSV format,The data set used in this Spark SQL Use Case consists of 163065 records. )
 ----------------------
 DRG Definition: The code and description identifying the MS-DRG. MS-DRGs are a classification system that groups similar clinical 
 conditions (diagnoses) and procedures furnished by the hospital during their stay.
