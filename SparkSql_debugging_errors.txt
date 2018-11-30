@@ -1,0 +1,44 @@
+                                            :How to debugg errors:
+
+-----------------------------------------------------------------------------------------------------------------------
+1) how to debug "java.lang.NumberFormatException" in sparksql.
+
+i.e: Suppose i have taken a "abc.csv" file and it is having following fiels(id, name)
+but by default name field is int type, but i need it in string type. this is data error
+which needs o be taken care during the data injection/creation.
+
+Now only one way is left to debug is to do some changes in code:
+----------------------------------------------------------------------
+import scala.util.Try
+
+case class Varnish(ID: int, varnish_latency: Option[String])
+
+...
+  .map(p => Varnish(p(11), Try(p(8).toString).toOption))
+-----------------------------------------------------------------------
+
+by adding the above code at appropiate place in our program can solve this 
+issue.
+For Example refer the link: https://github.com/mayankkr093/SparkSQL/blob/master/Patient/Patient.scala 
+
+--------------------------------------------------------------------------------------------------------------------------
+2) if we are getting winutils not found dring the compilation of (Spark program in Scala)program then do the following:
+
+
+1) First download winutils.exe file.
+2) Then put winutils.exe file in C Drive with the name C:\\winutils\bin.
+3) After that go to the Environment Variable and set 
+HADOOP_HOME    C:\\winutils
+4) if 3rd step will not work then do the 5th option.
+5) if system poperties is disabled or not working then put this line in
+ main code it will work:
+System.setProperty("hadoop.home.dir", "C:\\winutils");
+
+
+or
+1)Download winutils.exe
+2)Create folder, say C:\winutils\bin
+3)Copy winutils.exe inside C:\winutils\bin
+4)Set environment variable HADOOP_HOME to C:\winutils 
+--------------------------------------------------------------------------------------------------------------------------------- 
+3) 
