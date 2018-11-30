@@ -1,22 +1,36 @@
 package com.mayank.spark.example
 
+
 import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SparkSession
+import org.apache.spark._
+import org.apache.spark.SparkContext
+import org.apache.spark.sql.SQLContext
+import scala.util.Try
 
 object Patient {
 
   System.setProperty("hadoop.home.dir", "C:\\winutils");
-
+  case class Patient(DRGDefinition:String, ProviderId:Option[Int], ProviderName:String, providerStreetAddress: String, 
+                     ProviderCity:String,ProviderState:String,ProviderZipCode:Option[Int],HospitalReferralRegionDescription:String,
+                     TotalDischarges:Option[Int],AverageCoveredCharges:Option[Double],AverageTotalPayments:Option[Double], 
+                     AverageMedicarePayments:Option[Double])
 
   def main(args: Array[String]) {
 
-    val sc=
-      SparkSession.builder()
-       .appName("SQL-Basic")
-        .master("local[4]")
-        .getOrCreate()
+    val config = new SparkConf().setAppName("Patient").setMaster("local")
+    val sc = new SparkContext(config)
+    val sqlContext = new SQLContext(sc)
+    import sqlContext.implicits._
 
-   val df = sc.read.format("com.databricks.spark.csv").option("header", "true").option("inferSchema", "true").load("inpatientCharges.csv")
+
+    val rowsRDD = sc.textFile("inpatientCharges.csv")
+    val RDD = rowsRDD.map{row => row.split(",")}
+      .map{x => Patient(x(0),Try(x(1).toInt).toOption,x(2),x(3),x(4),x(5),Try(x(6).toInt).toOption,x(7),
+                        Try(x(8).toInt).toOption,Try(x(9).toDouble).toOption,Try(x(10).toDouble).toOption,
+                        Try(x(11).toDouble).toOption)}
+    
+    val df = RDD.toDF()
+
     df.show()
     df.printSchema()
 
